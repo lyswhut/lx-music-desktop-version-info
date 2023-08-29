@@ -119,12 +119,13 @@ exports.request = (url, _options, callback) => {
   if (options.timeout) stopTimeout = applyTimeout(request, options.timeout)
 
   request.on('response', (response) => {
-    let data = ''
+    let data = []
     response.on('data', (chunk) => {
-      data += chunk
+      data.push(chunk)
     })
     response.on('end', () => {
       stopTimeout?.()
+      data = Buffer.concat(data).toString()
       if (_options.json) {
         try {
           data = JSON.parse(data)
